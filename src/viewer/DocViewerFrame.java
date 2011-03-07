@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 
 public class DocViewerFrame extends JFrame {
 
@@ -18,22 +19,24 @@ public class DocViewerFrame extends JFrame {
 	 */
 	public static void main(String[] args) {
 		DocViewerFrame myFrame = new DocViewerFrame();
+	}
+	
+	DocViewerFrame() {
+		JLabel jlbHelloWorld = new JLabel("Hello World");
+		JToolBar toolbar = new JToolBar();
+		add(jlbHelloWorld);
+		this.add(toolbar);
+		this.setSize(300,500);
+		// pack();
 		try {
 			ViewableWebDocument doc = 
 				new ViewableWebDocument(new URL("http://docs.google.com/View?id=dhs6mc8s_6461g9hdgmhb"));
-			myFrame.displayDocument(doc);
+			this.displayDocument(doc);
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage());
 			
 		}
 
-	}
-	
-	DocViewerFrame() {
-		JLabel jlbHelloWorld = new JLabel("Hello World");
-		add(jlbHelloWorld);
-		this.setSize(300,500);
-		// pack();
 		setVisible(true);	
 	}
 	
