@@ -9,24 +9,29 @@ import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import java.awt.BorderLayout;
+import java.awt.Container;
 
 public class DocViewerFrame extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8108386488877345580L;
 	private JEditorPane editPane = null;
 	private JScrollPane scrollPane = null;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DocViewerFrame myFrame = new DocViewerFrame();
+		new DocViewerFrame();
 	}
 	
 	DocViewerFrame() {
-		JLabel jlbHelloWorld = new JLabel("Hello World");
 		JToolBar toolbar = new JToolBar();
-		add(jlbHelloWorld);
-		this.add(toolbar);
-		this.setSize(300,500);
+		Container contentPane = this.getContentPane();
+	    contentPane.add(toolbar, BorderLayout.NORTH);
+	    this.setSize(300,500);
 		// pack();
 		try {
 			ViewableWebDocument doc = 
@@ -36,7 +41,7 @@ public class DocViewerFrame extends JFrame {
 			JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage());
 			
 		}
-
+		
 		setVisible(true);	
 	}
 	
@@ -49,7 +54,7 @@ public class DocViewerFrame extends JFrame {
 		catch(IOException e) {
 			JOptionPane.showMessageDialog(null, "Problem accessing document: " + e.getMessage());
 		}
-		this.add(scrollPane);
+		this.getContentPane().add(scrollPane, BorderLayout.CENTER);
 		this.pack();
 		
 	}
