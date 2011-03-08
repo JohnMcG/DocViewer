@@ -1,62 +1,199 @@
 package viewer;
 
 import java.io.IOException;
-import java.net.URL;
 
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JEditorPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.print.PrinterException;
 
-public class DocViewerFrame extends JFrame {
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+
+public class DocViewerFrame extends JFrame implements ActionListener {
+
+	private class PrintAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 281915821496666542L;
+		PrintAction() {
+			super("Print...");
+			this.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				selectedDoc.print();
+			} catch (PrinterException e1) {
+				JOptionPane.showMessageDialog(null, "Printing failed: " + e1.getMessage());
+			}			
+		}
+		
+		
+	}
+	
+	private class ExitAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1404223376159722545L;
+
+		ExitAction() {
+			super("Exit");
+			this.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
+	}
+	
+	private class FileAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 610797174787606225L;
+		private int m_index = 0;
+
+		FileAction(int index, String fileType) {
+			super(fileType);
+			m_index = index;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			displayDocument(docCollection.getDocAt(m_index));
+		}
+	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8108386488877345580L;
-	private JEditorPane editPane = null;
 	private JScrollPane scrollPane = null;
+	private DocumentCollection docCollection = new DocumentCollection();
+	JComboBox comboBox;
+	private PrintAction printAction = new PrintAction();
+	private ExitAction exitAction = new ExitAction();
+	private ViewableDocument selectedDoc = null;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new DocViewerFrame();
+		JFrame myFrame = new DocViewerFrame();
+		myFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	DocViewerFrame() {
-		JToolBar toolbar = new JToolBar();
-		Container contentPane = this.getContentPane();
-	    contentPane.add(toolbar, BorderLayout.NORTH);
-	    this.setSize(300,500);
-		// pack();
+		this.initMenu();
+		this.initToolBar();
 		try {
-			ViewableWebDocument doc = 
-				new ViewableWebDocument(new URL("http://docs.google.com/View?id=dhs6mc8s_6461g9hdgmhb"));
+			ViewableDocument doc = docCollection.getDocAt(0);
 			this.displayDocument(doc);
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage());
 			
 		}
-		
+		this.setSize(1000, 1000);
 		setVisible(true);	
 	}
 	
+	private void initToolBar()
+	{
+		JToolBar toolBar = new JToolBar();
+
+		JLabel label = new JLabel();
+		label.setText("Choose the document to view: ");
+		toolBar.add(label);
+		
+		comboBox = new JComboBox();
+		Iterable<String> docTypes = docCollection.getDocumentTypes();
+		for (String type: docTypes) {
+			comboBox.addItem(type);
+		}
+		comboBox.addActionListener(this);
+		toolBar.add(comboBox);
+		
+		toolBar.addSeparator();
+		toolBar.setFloatable(false);
+			
+		toolBar.add(printAction);
+		
+	    this.getContentPane().add(toolBar, BorderLayout.NORTH);
+
+	}
+	
+	private void initMenu() {
+		JMenuBar menuBar = new JMenuBar();
+
+		JMenu filemenu = new JMenu("File");
+		filemenu.setMnemonic(KeyEvent.VK_F);
+		//filemenu.setMnemonic(mnemonic)
+		filemenu.add(printAction);
+		filemenu.addSeparator();
+		int index = 0;
+		Iterable<String> docTypes = docCollection.getDocumentTypes();
+		for (String type: docTypes) {
+			filemenu.add(new FileAction(index++, type));
+		}
+
+		filemenu.addSeparator();
+		filemenu.add(exitAction);
+		menuBar.add(filemenu);
+	
+		
+		this.setJMenuBar(menuBar);
+	}
+	
 	private void displayDocument(ViewableDocument doc) {
-		if (scrollPane != null)
-			this.remove(editPane);
+		selectedDoc = doc;
+		comboBox.setSelectedItem(doc.getDocumentType());
 		try {
-			scrollPane = new JScrollPane(doc.getEditorPane());
-		}
-		catch(IOException e) {
-			JOptionPane.showMessageDialog(null, "Problem accessing document: " + e.getMessage());
-		}
-		this.getContentPane().add(scrollPane, BorderLayout.CENTER);
-		this.pack();
+			  this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				if (scrollPane != null)
+					this.remove(scrollPane);
+				try {
+					Container container = doc.getViewContainer();
+					scrollPane = new JScrollPane(container);
+				}
+				catch(IOException e) {
+					JOptionPane.showMessageDialog(null, "Problem accessing document: " + e.getMessage());
+				}
+				this.getContentPane().add(scrollPane, BorderLayout.CENTER);
+			} finally {
+				this.repaint();
+				this.setVisible(true);
+				this.setCursor(Cursor.getDefaultCursor());
+			}
+				
 		
 	}
 
+	private void handleSelectionEvent(ActionEvent arg0) {
+		this.displayDocument(docCollection.getDocAt(comboBox.getSelectedIndex()));
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {		
+		if (arg0.getSource().equals(comboBox)) {		
+			this.handleSelectionEvent(arg0);
+		}
+	}
+
 }
+

@@ -1,0 +1,3 @@
+Welcome to the document viewer.
+
+Please choose a document viewer in the toolbar above.
