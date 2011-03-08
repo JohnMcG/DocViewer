@@ -23,6 +23,13 @@ public class DocumentCollection {
 						"Resume");
 			
 			documents.add(doc2);
+			
+			ViewableDocument doc3 =  
+				new ViewableURLDocument(new URL("file:///"
+						+ System.getProperty("user.dir")
+						+ "/resources/cover letter.rtf"), "Cover letter",
+						ViewableURLDocument.Format.RTF);
+			documents.add(doc3);
 		}
 		catch(MalformedURLException e)
 		{
@@ -42,6 +49,10 @@ public class DocumentCollection {
 			returnVal.add(document.getDocumentType());			
 		}
 		return returnVal;
+	}
+	
+	public int length() {
+		return documents.size();
 	}
 	
 	

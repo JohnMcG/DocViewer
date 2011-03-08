@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
-import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -23,6 +22,20 @@ import javax.swing.JLabel;
 
 public class DocViewerFrame extends JFrame implements ActionListener {
 
+	
+	private static final long serialVersionUID = -8108386488877345580L;
+	private enum Direction {FORWARD, BACKWARD};
+	private JScrollPane scrollPane = null;
+	private DocumentCollection docCollection = new DocumentCollection();
+	JComboBox comboBox;
+	private PrintAction printAction = new PrintAction();
+	private ExitAction exitAction = new ExitAction();
+	private ViewableDocument selectedDoc = null;
+	private NavAction forwardAction = new NavAction(Direction.FORWARD);
+	private NavAction backwardAction = new NavAction(Direction.BACKWARD);
+	private int selectedIndex = 0;
+	
+	
 	private class PrintAction extends AbstractAction {
 
 		/**
@@ -80,17 +93,30 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 			displayDocument(docCollection.getDocAt(m_index));
 		}
 	}
+		
+	private class NavAction extends AbstractAction {
+	
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4787828591731445236L;
+		private Direction m_direction;
+		NavAction(Direction direction) {
+			super(direction.equals(Direction.FORWARD) ? ">" : "<");
+			m_direction = direction;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			navigate(m_direction);
+		}
+	}
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8108386488877345580L;
-	private JScrollPane scrollPane = null;
-	private DocumentCollection docCollection = new DocumentCollection();
-	JComboBox comboBox;
-	private PrintAction printAction = new PrintAction();
-	private ExitAction exitAction = new ExitAction();
-	private ViewableDocument selectedDoc = null;
+
+	
 	/**
 	 * @param args
 	 */
@@ -130,9 +156,15 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		toolBar.add(comboBox);
 		
 		toolBar.addSeparator();
-		toolBar.setFloatable(false);
+		
+		toolBar.add(backwardAction);
+		toolBar.add(forwardAction);
+		
+		toolBar.addSeparator();
 			
 		toolBar.add(printAction);
+		
+		toolBar.setFloatable(false);
 		
 	    this.getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -161,8 +193,7 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 	}
 	
 	private void displayDocument(ViewableDocument doc) {
-		selectedDoc = doc;
-		comboBox.setSelectedItem(doc.getDocumentType());
+		this.updateState(doc);
 		try {
 			  this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				if (scrollPane != null)
@@ -184,6 +215,16 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		
 	}
 
+	private void updateState(ViewableDocument doc) {		
+			selectedDoc = doc;
+			comboBox.setSelectedItem(doc.getDocumentType());
+			selectedIndex = comboBox.getSelectedIndex();
+			backwardAction.setEnabled(selectedIndex != 0);
+			forwardAction.setEnabled(selectedIndex < docCollection.length() - 1);
+				
+	}
+
+	
 	private void handleSelectionEvent(ActionEvent arg0) {
 		this.displayDocument(docCollection.getDocAt(comboBox.getSelectedIndex()));
 	}
@@ -193,6 +234,14 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		if (arg0.getSource().equals(comboBox)) {		
 			this.handleSelectionEvent(arg0);
 		}
+	}
+	
+	private void navigate(Direction direction) {
+		int newIndex = direction.equals(Direction.FORWARD) 
+			? selectedIndex + 1 
+			: selectedIndex - 1;
+		assert(newIndex > 0 && newIndex < docCollection.length());
+		this.displayDocument(docCollection.getDocAt(newIndex));
 	}
 
 }
