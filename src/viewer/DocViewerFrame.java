@@ -49,6 +49,7 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			assert (selectedDoc instanceof Printable);
 			try {
 				selectedDoc.print();
 			} catch (PrinterException e1) {
@@ -216,12 +217,13 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 	}
 
 	private void updateState(ViewableDocument doc) {		
-			selectedDoc = doc;
-			comboBox.setSelectedItem(doc.getDocumentType());
-			selectedIndex = comboBox.getSelectedIndex();
-			backwardAction.setEnabled(selectedIndex != 0);
-			forwardAction.setEnabled(selectedIndex < docCollection.length() - 1);
-				
+		selectedDoc = doc;
+		comboBox.setSelectedItem(doc.getDocumentType());
+		selectedIndex = comboBox.getSelectedIndex();
+		backwardAction.setEnabled(selectedIndex != 0);
+		forwardAction.setEnabled(selectedIndex < docCollection.length() - 1);
+		printAction.setEnabled(selectedDoc instanceof Printable);
+			
 	}
 
 	

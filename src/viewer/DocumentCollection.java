@@ -27,8 +27,7 @@ public class DocumentCollection {
 			ViewableDocument doc3 =  
 				new ViewableURLDocument(new URL("file:///"
 						+ System.getProperty("user.dir")
-						+ "/resources/cover letter.rtf"), "Cover letter",
-						ViewableURLDocument.Format.RTF);
+						+ "/resources/cover letter.rtf"), "Cover letter");
 			documents.add(doc3);
 		}
 		catch(MalformedURLException e)
