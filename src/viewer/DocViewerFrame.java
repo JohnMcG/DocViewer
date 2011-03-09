@@ -103,7 +103,7 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		private static final long serialVersionUID = -4787828591731445236L;
 		private Direction m_direction;
 		NavAction(Direction direction) {
-			super(direction.equals(Direction.FORWARD) ? ">" : "<");
+			super(direction.equals(Direction.FORWARD) ? "->" : "<-");
 			m_direction = direction;
 		}
 		

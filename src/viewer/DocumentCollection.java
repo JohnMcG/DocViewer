@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import viewer.ViewableFileDocument.Format;
+
 public class DocumentCollection {
 	private ArrayList<ViewableDocument> documents;
 	
@@ -25,9 +27,9 @@ public class DocumentCollection {
 			documents.add(doc2);
 			
 			ViewableDocument doc3 =  
-				new ViewableURLDocument(new URL("file:///"
-						+ System.getProperty("user.dir")
-						+ "/resources/cover letter.rtf"), "Cover letter");
+				new ViewableFileDocument("./resources/cover letter.rtf",
+					ViewableFileDocument.Format.RTF,
+					"Cover letter");
 			documents.add(doc3);
 		}
 		catch(MalformedURLException e)

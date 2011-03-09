@@ -9,7 +9,7 @@ import javax.swing.JEditorPane;
 import javax.swing.text.rtf.RTFEditorKit;
 
 
-public class ViewableURLDocument extends AbstractViewableDocument implements Printable {
+public class ViewableURLDocument extends AbstractViewableDocument {
 
 	private URL m_url;
 	

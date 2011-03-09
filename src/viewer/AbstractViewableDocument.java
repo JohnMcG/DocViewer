@@ -7,13 +7,11 @@ import java.io.IOException;
 import javax.swing.JEditorPane;
 
 
-public abstract class AbstractViewableDocument implements ViewableDocument {
+public abstract class AbstractViewableDocument implements ViewableDocument, Printable {
 
 	private String m_type;
-
-	public enum Format {TEXT, RTF}
 	
-	JEditorPane editorPane;
+	protected JEditorPane editorPane;
 	
 	protected AbstractViewableDocument(String type) {
 		m_type = type;
