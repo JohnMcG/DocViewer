@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentSpec>
+	<document sourceType="file" type="cover letter" location="./resources/cover letter.rtf" format="rtf"></document>	
+	<document sourceType="url" type="resume" location="http://docs.google.com/View?id=dhs6mc8s_6461g9hdgmhb"></document>
+	<document sourceType="file" type="design document" location="./resources/design document.rtf" format="rtf"></document>		
+</documentSpec>

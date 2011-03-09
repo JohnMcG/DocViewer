@@ -1,42 +1,51 @@
 package viewer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
 import java.util.ArrayList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import javax.swing.JOptionPane;
 
-import viewer.ViewableFileDocument.Format;
-
+/*
+ * Class representing a collection of documents
+ */
 public class DocumentCollection {
 	private ArrayList<ViewableDocument> documents;
 	
 	DocumentCollection() {
 		documents = new ArrayList<ViewableDocument>();
-		try {
-			ViewableDocument doc1 =  
-				new ViewableURLDocument(new URL("file:///"
-						+ System.getProperty("user.dir")
-						+ "/resources/directions.txt"), "Directions");
-			documents.add(doc1);
-			
-			ViewableDocument doc2 = 
-				new ViewableURLDocument(new URL("http://docs.google.com/View?id=dhs6mc8s_6461g9hdgmhb"),
-						"Resume");
-			
-			documents.add(doc2);
-			
-			ViewableDocument doc3 =  
-				new ViewableFileDocument("./resources/cover letter.rtf",
-					ViewableFileDocument.Format.RTF,
-					"Cover letter");
-			documents.add(doc3);
-		}
-		catch(MalformedURLException e)
-		{
-			JOptionPane.showMessageDialog(null, "Bad url: " + e.getMessage());
-		}
+		initCollection();		
+
+	}
+	
+	private void initCollection() {
 		
+		try {
+			File file = new File("./resources/IncludedDocs.xml");
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(file);
+			doc.getDocumentElement().normalize();
+			NodeList nodeLst = doc.getElementsByTagName("document");
+
+			for (int s = 0; s < nodeLst.getLength(); ++s) {
+
+				Node fstNode = nodeLst.item(s);
+		    
+				if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
+					ViewableDocument current = AbstractViewableDocument.CreateViewableDocument(fstNode);					
+					documents.add(current);
+				}
+		    			     
+		    }
+
+		  
+		  } catch (Exception e) {
+		    e.printStackTrace();
+		  }
 
 	}
 	

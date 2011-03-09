@@ -1,14 +1,14 @@
 package viewer;
 
-import java.awt.Container;
-import java.awt.print.PrinterException;
+
 import java.io.IOException;
 import java.net.URL;
-
 import javax.swing.JEditorPane;
-import javax.swing.text.rtf.RTFEditorKit;
 
 
+/*
+ * Class representing a viewable document accessible by a URL
+ */
 public class ViewableURLDocument extends AbstractViewableDocument {
 
 	private URL m_url;

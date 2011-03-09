@@ -20,6 +20,10 @@ import java.awt.print.PrinterException;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
+
+/*
+ * Main application frame for document viewer application
+ */
 public class DocViewerFrame extends JFrame implements ActionListener {
 
 	
@@ -35,7 +39,9 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 	private NavAction backwardAction = new NavAction(Direction.BACKWARD);
 	private int selectedIndex = 0;
 	
-	
+	/*
+	 * Class to represent printing
+	 */
 	private class PrintAction extends AbstractAction {
 
 		/**
@@ -51,7 +57,8 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			assert (selectedDoc instanceof Printable);
 			try {
-				selectedDoc.print();
+				Printable printable = (Printable) selectedDoc;
+				printable.print();
 			} catch (PrinterException e1) {
 				JOptionPane.showMessageDialog(null, "Printing failed: " + e1.getMessage());
 			}			
@@ -60,10 +67,10 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		
 	}
 	
+	/*
+	 * Class to represent exiting the application
+	 */
 	private class ExitAction extends AbstractAction {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1404223376159722545L;
 
 		ExitAction() {
@@ -77,10 +84,10 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		}
 	}
 	
+	/*
+	 * Class to represent choosing a File
+	 */
 	private class FileAction extends AbstractAction {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 610797174787606225L;
 		private int m_index = 0;
 
@@ -94,12 +101,12 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 			displayDocument(docCollection.getDocAt(m_index));
 		}
 	}
-		
+
+	/*
+	 * Class to represent the navigation buttons
+	 */
 	private class NavAction extends AbstractAction {
 	
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -4787828591731445236L;
 		private Direction m_direction;
 		NavAction(Direction direction) {
@@ -113,10 +120,7 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		}
 	}
 
-	/**
-	 * 
-	 */
-
+	
 	
 	/**
 	 * @param args
@@ -126,6 +130,10 @@ public class DocViewerFrame extends JFrame implements ActionListener {
 		myFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	
+	/*
+	 * Constructor -- set up controls
+	 */
 	DocViewerFrame() {
 		this.initMenu();
 		this.initToolBar();

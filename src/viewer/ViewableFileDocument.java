@@ -15,6 +15,8 @@ import javax.swing.text.rtf.RTFEditorKit;
 /**
  * @author john
  *
+ *
+ * Class representing a document in a file
  */
 public class ViewableFileDocument extends AbstractViewableDocument {
 
